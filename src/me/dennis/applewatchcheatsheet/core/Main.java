@@ -9,7 +9,7 @@ public class Main {
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.add(new JavaPanel());
 		f.setVisible(true);
-		f.setSize(312 + 6, 390 + 29);
+		f.setSize(312 + 6, 390 + 28);
 		f.setResizable(false);
 		f.setLocationRelativeTo(null);
 	}

@@ -39,8 +39,11 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +54,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 @SuppressWarnings("serial")
-public class JavaPanel extends JPanel implements ActionListener {
+public class JavaPanel extends JPanel implements ActionListener, Runnable {
 	
 	private List<String> lines = new ArrayList<String>();
 	private String output = "";
@@ -90,8 +93,31 @@ public class JavaPanel extends JPanel implements ActionListener {
 		chars.put(VK_8, new String[]{"8", "*"});
 		chars.put(VK_9, new String[]{"9", "("});
 		chars.put(VK_0, new String[]{"0", ")"});
+		
+		new Thread(this).start();
 	}
-
+	
+	@Override
+	public void run() {
+		try {
+			Thread.sleep(1000);
+			BufferedReader reader = new BufferedReader(new FileReader(new File("questions.txt")));
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String question = line.split(";")[0];
+				String answer = line.split(";")[1];
+				lines.clear();
+				lines.add("Q: " + question);
+				lines.add("");
+				lines.add("A: " + answer);
+				saveImage();
+			}
+			reader.close();
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		for (int i = 0; i < KEY_LAST; i++) {
@@ -133,16 +159,7 @@ public class JavaPanel extends JPanel implements ActionListener {
 			output = "";
 		}
 		else if (Keyboard.isPressed(VK_ESCAPE)) {
-			BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-			print = true;
-			paint(image.getGraphics());
-			print = false;
-			try {
-				ImageIO.write(image, "JPEG", new File("image.jpg"));
-			}
-			catch (IOException e) {
-				System.err.println("Could not save image...");
-			}
+			saveImage();
 		}
 		// Special characters
 		for (Entry<Integer, String[]> entry : chars.entrySet()) {
@@ -197,6 +214,30 @@ public class JavaPanel extends JPanel implements ActionListener {
 		}
 		
 		repaint();
+	}
+	
+	private void saveImage() {
+		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+		print = true;
+		paint(image.getGraphics());
+		print = false;
+		try {
+			String path;
+			File folder = new File("images/");
+			if (!folder.exists()) {
+				folder.mkdirs();
+			}
+			while (true) {
+				path = "images/" + new SecureRandom().nextInt() + ".jpg";
+				if (!new File(path).exists()) {
+					break;
+				}
+			}
+			ImageIO.write(image, "JPEG", new File(path));
+		}
+		catch (IOException e) {
+			System.err.println("Could not save image...");
+		}
 	}
 
 	private List<String> wrapList(List<String> log, FontMetrics fm) {
