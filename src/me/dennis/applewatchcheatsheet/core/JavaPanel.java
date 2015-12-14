@@ -103,14 +103,16 @@ public class JavaPanel extends JPanel implements ActionListener, Runnable {
 			Thread.sleep(1000);
 			BufferedReader reader = new BufferedReader(new FileReader(new File("questions.txt")));
 			String line;
+			int i = 0;
 			while ((line = reader.readLine()) != null) {
-				String question = line.split(";")[0];
-				String answer = line.split(";")[1];
+				String question = line.split(";", 2)[0];
+				String answer = line.split(";", 2)[1];
 				lines.clear();
 				lines.add("Q: " + question);
 				lines.add("");
 				lines.add("A: " + answer);
-				saveImage();
+				saveImage(i);
+				i++;
 			}
 			reader.close();
 		} catch (IOException | InterruptedException e) {
@@ -159,7 +161,7 @@ public class JavaPanel extends JPanel implements ActionListener, Runnable {
 			output = "";
 		}
 		else if (Keyboard.isPressed(VK_ESCAPE)) {
-			saveImage();
+			saveImage(new SecureRandom().nextInt());
 		}
 		// Special characters
 		for (Entry<Integer, String[]> entry : chars.entrySet()) {
@@ -188,7 +190,7 @@ public class JavaPanel extends JPanel implements ActionListener, Runnable {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		font = font.deriveFont(30F);
+		font = font.deriveFont(24F);
 		g2.setFont(font);
 		FontMetrics fm = g2.getFontMetrics(font);
 		
@@ -210,13 +212,13 @@ public class JavaPanel extends JPanel implements ActionListener, Runnable {
 		g2.setColor(new Color(0x4F4F4F));
 		int i;
 		for (i = 0; i < display.size(); i++) {
-			g2.drawString(display.get(i), 5, font.getSize() + 6 + (i * font.getSize()));
+			g2.drawString(display.get(i), 5, font.getSize() + (i * (font.getSize() - 5)));
 		}
 		
 		repaint();
 	}
 	
-	private void saveImage() {
+	private void saveImage(int i) {
 		BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		print = true;
 		paint(image.getGraphics());
@@ -227,11 +229,11 @@ public class JavaPanel extends JPanel implements ActionListener, Runnable {
 			if (!folder.exists()) {
 				folder.mkdirs();
 			}
-			while (true) {
-				path = "images/" + new SecureRandom().nextInt() + ".jpg";
-				if (!new File(path).exists()) {
-					break;
-				}
+			if (i < 10) {
+				path = "images/0" + i + ".jpg";
+			}
+			else {
+				path = "images/" + i + ".jpg";
 			}
 			ImageIO.write(image, "JPEG", new File(path));
 		}
