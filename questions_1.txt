@@ -1,6 +1,0 @@
-Why is a GUI easy to learn?;Familiar layout, intuitive, faster input and fewer mistakes when using the program due to this and WIMP (windows, icons, menus, pointers) tools
-How is the advantage of faster input to enter data (e.g. name of a football team) created through a drop down list?;Operator does not need to type in name of the team
-How can a user interface be made effective?;It ensures data is already in format to be input, clear instructions to users
-What are the advantages of using a drop down list to enter data e.g. the name of a football team when entering match results?;Used for validation, prevents typing errors, allows faster input
-What characteristics does a good user interface have?;Effectiveness - all data required can be input accurately, efficiency - makes best use of available resources, use of user interface tools like drop downs, check boxes
-What are the different tools that can be used to create a good user interface?;Drop down menus, check boxes, radio buttons, labels, text boxes
